@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GameDev.ist Deep Jam başvuru kılavuzuna göre hazırlanmış başvuru formu. Cevaplar tarayıcıda kalır, JSON olarak indirilir.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 fill=%22%230d0e10%22/%3E%3Crect x=%224%22 y=%224%22 width=%228%22 height=%228%22 fill=%22none%22 stroke=%22%23e4e6e8%22/%3E%3C/svg%3E">
+<title>Deep Jam Başvuru Formu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0d0e10;
+    --panel: #131518;
+    --line: #26292d;
+    --line-strong: #3a3e44;
+    --text: #e4e6e8;
+    --muted: #8a9097;
+    --dim: #5c6168;
+    --focus: #f2f3f4;
+    --error: #d9534f;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  html { background: var(--bg); }
+  body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 16px 64px;
+    overflow-wrap: anywhere;
+  }
+  ::selection { background: var(--text); color: var(--bg); }
+
+  /* Başlıklar */
+  .ust-etiket {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0 0 24px;
+  }
+  h2 {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 56px 0 8px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  h2::before { /* sol üstte kısa işaret çizgisi */
+    content: "";
+    position: absolute;
+    top: -1px; left: 0;
+    width: 32px; height: 1px;
+    background: var(--text);
+  }
+  h2 .no {
+    font-family: var(--mono);
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .06em;
+  }
+  h3 {
+    font-family: var(--mono);
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 32px 0 12px;
+  }
+  h3::before { content: "// "; color: var(--dim); }
+
+  p { margin: 0 0 18px; }
+  label { color: var(--text); }
+  form > p:not(:has(input, select, textarea, button)),
+  #tur_sliderlari + p, h3 + p:not(:has(input, select, textarea)) { color: var(--muted); font-size: .95rem; }
+
+  /* Alanlar */
+  input[type="text"], input[type="email"], input[type="tel"], input[type="url"],
+  input[type="number"], select, textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  textarea { resize: vertical; min-height: 96px; }
+  input::placeholder, textarea::placeholder { color: var(--dim); }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--focus);
+  }
+  input:-webkit-autofill {
+    -webkit-text-fill-color: var(--text);
+    -webkit-box-shadow: 0 0 0 100px var(--panel) inset;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  select {
+    padding-right: 36px;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(-45deg, transparent 50%, var(--muted) 50%);
+    background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+  }
+  select option { background: var(--panel); color: var(--text); }
+
+  /* Kare radyo ve onay kutuları */
+  input[type="radio"], input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: none;
+    width: 16px; height: 16px;
+    margin: 0 10px 0 0;
+    vertical-align: -3px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
+    border-radius: 0;
+    cursor: pointer;
+  }
+  input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: var(--text);
+    background: var(--text);
+    box-shadow: inset 0 0 0 3px var(--panel);
+  }
+  input[type="radio"]:focus-visible, input[type="checkbox"]:focus-visible {
+    outline: 1px solid var(--focus);
+    outline-offset: 2px;
+  }
+  p:has(> label > input[type="radio"]) label { display: inline-flex; align-items: flex-start; padding: 5px 0; cursor: pointer; }
+  p:has(> label > input[type="radio"]) input { margin-top: 4px; }
+  p:has(> label > input[type="checkbox"]) {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 14px;
+    font-size: .92rem;
+    color: var(--muted);
+  }
+  p:has(> label > input[type="checkbox"]) label { display: flex; align-items: flex-start; color: var(--muted); cursor: pointer; }
+  p:has(> label > input[type="checkbox"]) input { margin-top: 4px; }
+  p:has(> label > input[type="checkbox"]) strong { color: var(--text); font-weight: 500; }
+
+  /* Butonlar */
+  button {
+    font-family: var(--mono);
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    padding: 12px 18px;
+    cursor: pointer;
+  }
+  .buton {
+    display: inline-block;
+    font-family: var(--mono);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  button:hover, .buton:hover { border-color: var(--text); }
+  button:focus-visible, .buton:focus-visible { outline: 1px solid var(--focus); outline-offset: 2px; }
+  .gizli-girdi { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); pointer-events: none; }
+  button[type="submit"] {
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+    font-weight: 500;
+  }
+  button[type="submit"]:hover { background: #ffffff; }
+
+  /* Kayıt çubuğu */
+  .kayit-cubugu {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .kayit-cubugu button, .kayit-cubugu .buton { padding: 9px 12px; font-size: .72rem; line-height: 1.55; }
+  #yukle_onay:not([hidden]) {
+    width: 100%;
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
+    font-size: .9rem;
+    color: var(--muted);
+  }
+  #yukle_onay span { width: 100%; }
+  #yukle_evet { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .durum {
+    width: 100%;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: .75rem;
+    color: var(--muted);
+  }
+  .durum:empty { display: none; }
+  .durum::before { content: "> "; color: var(--dim); }
+  #taslak_durum { color: var(--dim); }
+
+  /* Tür sliderları */
+  #tur_sliderlari { border: 1px solid var(--line); background: var(--panel); padding: 10px 16px 4px; margin-bottom: 18px; }
+  .slider-satir { margin: 6px 0 4px; }
+  .slider-baslik { display: flex; justify-content: space-between; gap: 12px; font-size: .95rem; }
+  .slider-baslik output {
+    font-family: var(--mono);
+    font-size: .8rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .slider {
+    position: relative;
+    height: 40px;
+    touch-action: pan-y pinch-zoom;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+  .slider-iz {
+    position: absolute;
+    left: 8px; right: 8px; top: 50%;
+    height: 1px;
+    background: var(--line-strong);
+  }
+  .slider-iz::after { /* 0-25-50-75-100 işaretleri */
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 4px; height: 4px;
+    background: linear-gradient(to right, var(--dim) 1px, transparent 1px) 0 0 / 25% 100% repeat-x;
+    border-right: 1px solid var(--dim);
+  }
+  .slider-dolu {
+    position: absolute; left: 0; top: -1px; height: 3px;
+    background: var(--text);
+  }
+  .slider-tutamac {
+    position: absolute; top: 50%;
+    width: 16px; height: 16px; margin: -8px 0 0 -8px;
+    background: var(--bg);
+    border: 1px solid var(--text);
+    z-index: 1;
+  }
+  .slider.aktif .slider-tutamac { background: var(--text); }
+  .slider:focus-visible .slider-tutamac { outline: 1px solid var(--focus); outline-offset: 3px; }
+  .hata { color: var(--error); font-family: var(--mono); font-size: .8rem; }
+</style>
+</head>
+<body>
+
+<p class="ust-etiket">GameDev.ist / Deep Jam</p>
+<h1>Başvuru Formu</h1>
+
+<div class="kayit-cubugu">
+  <button type="button" id="json_indir">Cevapları JSON olarak indir</button>
+  <label for="json_yukle" class="buton" id="json_yukle_btn" role="button" tabindex="0">JSON'dan yükle</label>
+  <input type="file" id="json_yukle" class="gizli-girdi" accept=".json,application/json,text/plain,text/json">
+  <div id="yukle_onay" hidden>
+    <span>Formdaki mevcut cevaplar dosyadakilerle değiştirilecek.</span>
+    <button type="button" id="yukle_evet">Yükle</button>
+    <button type="button" id="yukle_hayir">Vazgeç</button>
+  </div>
+  <p id="kayit_durum" class="durum" role="status" aria-live="polite"></p>
+  <p id="taslak_durum" class="durum"></p>
+</div>
+
+<form id="basvuru_formu" novalidate>
+
+  <!-- 1.0 -->
+  <h2><span class="no">1.0</span> Takım Bilgileri</h2>
+  <h3>Girişim &amp; İletişim Bilgileri</h3>
+
+  <p>
+    <label for="studyo_adi">Oyun Stüdyosu / Takım Adı</label><br>
+    <input type="text" id="studyo_adi" name="studyo_adi" required>
+  </p>
+
+  <p>
+    <label for="proje_yoneticisi">Proje Yöneticisi Adı Soyadı</label><br>
+    <input type="text" id="proje_yoneticisi" name="proje_yoneticisi" required>
+  </p>
+
+  <p>
+    <label for="eposta">E-posta Adresi</label><br>
+    <input type="email" id="eposta" name="eposta" required>
+  </p>
+
+  <p>
+    <label for="telefon">Telefon Numarası (ülke koduyla, örn: +90 5XX XXX XX XX)</label><br>
+    <input type="tel" id="telefon" name="telefon" placeholder="+90 5XX XXX XX XX" required>
+  </p>
+
+  <p>
+    <label for="takim_buyuklugu">Takım Büyüklüğü (kişi sayısı)</label><br>
+    <input type="number" id="takim_buyuklugu" name="takim_buyuklugu" min="1" required>
+  </p>
+
+  <p>
+    <label for="takim_uyeleri">Takım Üyeleri ve Rolleri (Ad Soyad – Uzmanlık alanı, her üye ayrı satırda)</label><br>
+    <textarea id="takim_uyeleri" name="takim_uyeleri" rows="6" required></textarea>
+  </p>
+
+  <!-- 2.0 -->
+  <h2><span class="no">2.0</span> Oyun Konsepti</h2>
+
+  <h3>Oyunun Adı</h3>
+  <p>
+    <label for="oyun_adi">Projenin resmi veya çalışma adı</label><br>
+    <input type="text" id="oyun_adi" name="oyun_adi" required>
+  </p>
+
+  <h3>Oyunun Türü</h3>
+  <p>Oyununuzun her türe ne kadar yakın olduğunu sürükleyerek belirtin (0 = hiç, 100 = ana tür). Telefonda değeri değiştirmek için çubuğu yana kaydırın.</p>
+  <div id="tur_sliderlari">
+    <div class="slider-satir" data-name="tur_aksiyon" data-label="Aksiyon"></div>
+    <div class="slider-satir" data-name="tur_macera" data-label="Macera"></div>
+    <div class="slider-satir" data-name="tur_ryo" data-label="Rol Yapma Oyunu (RYO)"></div>
+    <div class="slider-satir" data-name="tur_strateji" data-label="Strateji"></div>
+    <div class="slider-satir" data-name="tur_simulasyon" data-label="Simülasyon"></div>
+    <div class="slider-satir" data-name="tur_bulmaca" data-label="Bulmaca / Mantık"></div>
+    <div class="slider-satir" data-name="tur_platform" data-label="Platform"></div>
+    <div class="slider-satir" data-name="tur_spor_yaris" data-label="Spor / Yarış"></div>
+    <div class="slider-satir" data-name="tur_hyper_casual" data-label="Hyper-Casual"></div>
+  </div>
+  <p id="tur_hata" class="hata" hidden>Lütfen en az bir türü 0'dan büyük bir değere getirin.</p>
+
+  <h3>Oyunun Özeti ve Hikayesi</h3>
+  <p>
+    <label for="oyun_ozeti">Temel oynanış döngüsü, oyuncu deneyimi ve merkezi bağlayıcı unsur (3–4 kısa cümle)</label><br>
+    <textarea id="oyun_ozeti" name="oyun_ozeti" rows="5" required></textarea>
+  </p>
+
+  <h3>Proje Kapsamı</h3>
+
+  <p>
+    <label for="gelistirme_asamasi">01 – Mevcut Geliştirme Aşaması</label><br>
+    <select id="gelistirme_asamasi" name="gelistirme_asamasi" required>
+      <option value="">Seçiniz</option>
+      <option value="Konsept">Konsept</option>
+      <option value="Prototip">Prototip</option>
+      <option value="Vertical Slice">Vertical Slice</option>
+      <option value="Alpha">Alpha</option>
+      <option value="Beta">Beta</option>
+    </select>
+  </p>
+
+  <p>
+    <label for="grafik_stili">02 – Oyunun Grafik Stili (stil ve ekibin yetenekleri / bütçe-zaman kısıtlarıyla uyumu)</label><br>
+    <textarea id="grafik_stili" name="grafik_stili" rows="4" required></textarea>
+  </p>
+
+  <p>
+    <label for="usp">03 – Benzersiz Satış Teklifi (USP)</label><br>
+    <textarea id="usp" name="usp" rows="4" required></textarea>
+  </p>
+
+  <!-- 3.0 -->
+  <h2><span class="no">3.0</span> Teknik &amp; Portfolyo</h2>
+  <h3>Proof of Concept (PoC)</h3>
+
+  <p>
+    <label for="oyun_motoru">Oyun Motoru / Kullanılan Ana Teknolojiler (motor, diller, sunucu altyapısı ve seçim gerekçesi)</label><br>
+    <textarea id="oyun_motoru" name="oyun_motoru" rows="4" required></textarea>
+  </p>
+
+  <p>
+    <label for="prototip_link">Oynanabilir Prototip Bağlantısı (isteğe bağlı – örn: WebGL, Itch.io)</label><br>
+    <input type="url" id="prototip_link" name="prototip_link" placeholder="https://">
+  </p>
+
+  <p>
+    <label for="video_pitch">Video Pitch Bağlantısı (en fazla 3 dakika – YouTube/Vimeo)</label><br>
+    <input type="url" id="video_pitch" name="video_pitch" placeholder="https://" required>
+  </p>
+
+  <p>
+    <label for="portfolyo">Geçmiş Projeler / Portfolyo Bağlantıları (ArtStation, GitHub vb.)</label><br>
+    <textarea id="portfolyo" name="portfolyo" rows="4"></textarea>
+  </p>
+
+  <!-- 4.0 -->
+  <h2><span class="no">4.0</span> İş Modeli ve Finans</h2>
+
+  <h3>Ana Gelir Modeli</h3>
+  <p>
+    <label><input type="radio" name="gelir_modeli" value="Premium (Paid Upfront)" required> Premium (Paid Upfront)</label><br>
+    <label><input type="radio" name="gelir_modeli" value="Free-to-Play (F2P) + In-App Purchases (IAP)"> Free-to-Play (F2P) + In-App Purchases (IAP)</label><br>
+    <label><input type="radio" name="gelir_modeli" value="Subscription"> Subscription (e.g., Battle Pass, Monthly Access)</label><br>
+    <label><input type="radio" name="gelir_modeli" value="Advertising"> Advertising (Ad-Monetization)</label><br>
+    <label><input type="radio" name="gelir_modeli" value="Hybrid Model"> Hybrid Model</label>
+  </p>
+  <p>
+    <label for="gelir_gerekce">Seçtiğiniz modelin gerekçesi (F2P ise retention/conversion, Premium ise fiyatı haklı çıkaran değer)</label><br>
+    <textarea id="gelir_gerekce" name="gelir_gerekce" rows="5" required></textarea>
+  </p>
+
+  <h3>Pazara Giriş Stratejisi</h3>
+
+  <p>
+    <label for="is_plani">İş Planı Özeti (lansman sonrası 12 aylık büyüme stratejisi, kanallar, coğrafyalar)</label><br>
+    <textarea id="is_plani" name="is_plani" rows="5" required></textarea>
+  </p>
+
+  <p>
+    <label for="yol_haritasi">8 Haftalık Yol Haritası (Kilometre Taşları)</label><br>
+    <textarea id="yol_haritasi" name="yol_haritasi" rows="8" required></textarea>
+  </p>
+
+  <p>Program Sonrası Finansman Gereklilikleri</p>
+  <p>
+    <label for="butce_miktar">Tahmini Toplam Bütçe (Miktar)</label><br>
+    <input type="number" id="butce_miktar" name="butce_miktar" min="0" required>
+  </p>
+  <p>
+    <label for="butce_para_birimi">Para Birimi</label><br>
+    <select id="butce_para_birimi" name="butce_para_birimi" required>
+      <option value="">Seçiniz</option>
+      <option value="TRY">TRY</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+  </p>
+  <p>
+    <label for="butce_kullanim">Bütçenin harcanacağı kritik alanlar ve büyümeye etkisi</label><br>
+    <textarea id="butce_kullanim" name="butce_kullanim" rows="4" required></textarea>
+  </p>
+
+  <p>Program Sonrası Yayıncılık Gereklilikleri</p>
+  <p>
+    <label><input type="radio" name="yayincilik" value="Yayıncı" required> Yayıncı</label><br>
+    <label><input type="radio" name="yayincilik" value="Self-Publishing"> Self-Publishing</label>
+  </p>
+  <p>
+    <label for="yayincilik_aciklama">Aradığınız ortak tipi veya UA / pazarlama bütçesi planınız</label><br>
+    <textarea id="yayincilik_aciklama" name="yayincilik_aciklama" rows="4" required></textarea>
+  </p>
+
+  <!-- 5.0 -->
+  <h2><span class="no">5.0</span> Taahhüt &amp; Uygunluk</h2>
+
+  <h3>Motivasyon Mektubu – Neden Deep Jam?</h3>
+  <p>
+    <label for="motivasyon">Deep Jam'den beklentileriniz, ihtiyaç duyduğunuz kaynaklar ve bunların kilometre taşlarınızla ilişkisi</label><br>
+    <textarea id="motivasyon" name="motivasyon" rows="10" required></textarea>
+  </p>
+
+  <h3>Şartlar &amp; Gizlilik Politikası</h3>
+
+  <p>
+    <label>
+      <input type="checkbox" name="telif_beyani" value="onaylandi" required>
+      <span><strong>Telif Hakkı ve Özgünlük Beyanı:</strong> Tüm fikri mülkiyetin, oyun içeriğinin, görsel varlıkların ve kodun ekibimizin özgün yaratımı olduğunu ya da kullanılanlar için gerekli tüm lisans ve izinlere sahip olduğumuzu beyan ederim. Yanlış beyanın diskalifiye ve hukuki sonuçlara yol açabileceğini kabul ederim.</span>
+    </label>
+  </p>
+
+  <p>
+    <label>
+      <input type="checkbox" name="kvkk_onay" value="onaylandi" required>
+      <span><strong>Kişisel Verilerin Korunması (KVKK / GDPR):</strong> Paylaştığım kişisel verilerin (Ad, Soyad, E-posta, Telefon) yalnızca başvurunun değerlendirilmesi, program yönetimi ve yasal yükümlülükler amacıyla işlenmesine ve Deep Jam'e bağlı yetkili mentor ve ortaklarla sınırlı olarak paylaşılmasına açık rıza veriyorum.</span>
+    </label>
+  </p>
+
+  <p>
+    <button type="submit">Başvuruyu tamamla ve JSON indir</button>
+  </p>
+
+</form>
+
+<script>
+(function () {
+  // Dokunmatikte sürüklemenin başlaması için gereken yatay hareket (px)
+  var ESIK = 10;
+
+  document.querySelectorAll('.slider-satir').forEach(function (satir) {
+    var ad = satir.dataset.name;
+    var etiket = satir.dataset.label;
+
+    satir.innerHTML =
+      '<div class="slider-baslik"><span id="' + ad + '_etiket"></span><output>000</output></div>' +
+      '<div class="slider" role="slider" tabindex="0" aria-labelledby="' + ad + '_etiket"' +
+      ' aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+      '<div class="slider-iz"><div class="slider-dolu"></div><div class="slider-tutamac"></div></div>' +
+      '</div>' +
+      '<input type="hidden" name="' + ad + '" value="0">';
+    satir.querySelector('span').textContent = etiket;
+
+    var el = satir.querySelector('.slider');
+    var iz = satir.querySelector('.slider-iz');
+    var dolu = satir.querySelector('.slider-dolu');
+    var tutamac = satir.querySelector('.slider-tutamac');
+    var cikti = satir.querySelector('output');
+    var gizli = satir.querySelector('input');
+    var deger = 0;
+
+    function ayarla(v) {
+      v = Math.max(0, Math.min(100, Math.round(v)));
+      deger = v;
+      dolu.style.width = v + '%';
+      tutamac.style.left = v + '%';
+      cikti.textContent = String(v).padStart(3, '0');
+      gizli.value = v;
+      el.setAttribute('aria-valuenow', v);
+      satir.dispatchEvent(new Event('input', { bubbles: true })); // otomatik kayıt için
+    }
+
+    function konumdanDeger(x) {
+      var r = iz.getBoundingClientRect();
+      return (x - r.left) / r.width * 100;
+    }
+
+    var dokunus = null; // { id, x, y, surukleniyor }
+
+    function surukleBaslat(e) {
+      dokunus.surukleniyor = true;
+      try { el.setPointerCapture(dokunus.id); } catch (_) {}
+      el.classList.add('aktif');
+      ayarla(konumdanDeger(e.clientX));
+    }
+
+    el.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      dokunus = { id: e.pointerId, x: e.clientX, y: e.clientY, surukleniyor: false };
+      // Fare/kalemde hemen çalışır; dokunmatikte niyet netleşene kadar bekler.
+      // Dokunmatikte sadece dokunmak değeri değiştirmez.
+      if (e.pointerType !== 'touch') surukleBaslat(e);
+    });
+
+    el.addEventListener('pointermove', function (e) {
+      if (!dokunus || e.pointerId !== dokunus.id) return;
+      if (!dokunus.surukleniyor) {
+        var dx = Math.abs(e.clientX - dokunus.x);
+        var dy = Math.abs(e.clientY - dokunus.y);
+        if (dy > ESIK && dy >= dx) { dokunus = null; return; } // dikey kaydırma: slider'ı bırak
+        if (dx > ESIK && dx > dy * 1.5) surukleBaslat(e);       // net yatay hareket: sürükle
+        else return;
+      }
+      e.preventDefault();
+      ayarla(konumdanDeger(e.clientX));
+    });
+
+    function bitir(e) {
+      if (dokunus && e.pointerId === dokunus.id) {
+        el.classList.remove('aktif');
+        dokunus = null;
+      }
+    }
+    el.addEventListener('pointerup', bitir);
+    el.addEventListener('pointercancel', bitir);
+
+    // Bazı mobil tarayıcılar için: sürükleme kilitlendiyse sayfa hareket etmesin
+    el.addEventListener('touchmove', function (e) {
+      if (dokunus && dokunus.surukleniyor) e.preventDefault();
+    }, { passive: false });
+
+    el.addEventListener('keydown', function (e) {
+      var adim = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 }[e.key];
+      if (adim) ayarla(deger + adim);
+      else if (e.key === 'Home') ayarla(0);
+      else if (e.key === 'End') ayarla(100);
+      else return;
+      e.preventDefault();
+    });
+
+    gizli.ayarla = ayarla; // JSON'dan yüklerken kullanılır
+    ayarla(0);
+  });
+
+  // En az bir tür 0'dan büyük olmalı
+  var form = document.querySelector('form');
+  var hata = document.getElementById('tur_hata');
+  // Statik sayfa: sunucuya gönderim yok. Zorunlu alanlar kontrol edilir, cevaplar JSON olarak indirilir.
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var secili = Array.prototype.some.call(
+      document.querySelectorAll('#tur_sliderlari input[type=hidden]'),
+      function (i) { return Number(i.value) > 0; }
+    );
+    hata.hidden = secili;
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (!secili) {
+      document.getElementById('tur_sliderlari').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    document.getElementById('json_indir').click();
+    bildir('Tüm zorunlu alanlar dolu. Başvurunuz JSON olarak indirildi.');
+    durum.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ---------- JSON indir / yükle ----------
+  var durum = document.getElementById('kayit_durum');
+  var dosyaGirdisi = document.getElementById('json_yukle');
+  var yukleBtn = document.getElementById('json_yukle_btn');
+  var onayKutusu = document.getElementById('yukle_onay');
+  var bekleyenVeri = null;
+
+  function bildir(mesaj) { durum.textContent = mesaj; }
+
+  function cevaplariTopla() {
+    var alanlar = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name) return;
+      if (el.type === 'radio') {
+        if (!(el.name in alanlar)) alanlar[el.name] = null;
+        if (el.checked) alanlar[el.name] = el.value;
+      } else if (el.type === 'checkbox') {
+        alanlar[el.name] = el.checked;
+      } else if (el.type === 'number' || el.closest('#tur_sliderlari')) {
+        alanlar[el.name] = el.value === '' ? null : Number(el.value);
+      } else {
+        alanlar[el.name] = el.value;
+      }
+    });
+    return {
+      form: 'deep-jam-basvuru',
+      surum: 1,
+      kayit_tarihi: new Date().toISOString(),
+      alanlar: alanlar
+    };
+  }
+
+  function formDoluMu() {
+    var a = cevaplariTopla().alanlar;
+    return Object.keys(a).some(function (k) {
+      var v = a[k];
+      return v !== null && v !== '' && v !== false && v !== 0;
+    });
+  }
+
+  function iki(n) { return String(n).padStart(2, '0'); }
+
+  function dosyaAdi() {
+    var tr = { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i̇': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' };
+    var studyo = (form.elements.studyo_adi.value || '')
+      .toLocaleLowerCase('tr')
+      .replace(/i̇|[çğıöşü]/g, function (h) { return tr[h] || h; })
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'basvuru';
+    var t = new Date();
+    return 'deep-jam-' + studyo + '-' + t.getFullYear() + '-' + iki(t.getMonth() + 1) + '-' + iki(t.getDate()) +
+      '_' + iki(t.getHours()) + iki(t.getMinutes()) + '.json';
+  }
+
+  document.getElementById('json_indir').addEventListener('click', function () {
+    var ad = dosyaAdi();
+    try {
+      var json = JSON.stringify(cevaplariTopla(), null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = ad;
+      a.rel = 'noopener';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      // iOS Safari dosyayı geç okuyabiliyor; bağlantıyı hemen kapatmıyoruz
+      setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 60000);
+      bildir('Kaydedildi: ' + ad);
+    } catch (err) {
+      bildir('Dosya oluşturulamadı. Sayfayı Safari veya Chrome içinde açıp tekrar deneyin.');
+    }
+  });
+
+  // Klavyeyle de dosya seçici açılabilsin
+  yukleBtn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dosyaGirdisi.click(); }
+  });
+
+  function uygula(veri) {
+    var a = veri.alanlar;
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || !Object.prototype.hasOwnProperty.call(a, el.name)) return;
+      var v = a[el.name];
+      if (el.type === 'radio') el.checked = (el.value === v);
+      else if (el.type === 'checkbox') el.checked = !!v;
+      else if (el.ayarla) el.ayarla(Number(v) || 0);
+      else el.value = (v === null || v === undefined) ? '' : String(v);
+    });
+    hata.hidden = true;
+  }
+
+  function onayiKapat() { onayKutusu.hidden = true; bekleyenVeri = null; }
+
+  document.getElementById('yukle_evet').addEventListener('click', function () {
+    if (!bekleyenVeri) return onayiKapat();
+    var ad = bekleyenVeri.ad;
+    uygula(bekleyenVeri.veri);
+    onayiKapat();
+    bildir('Yüklendi: ' + ad);
+  });
+  document.getElementById('yukle_hayir').addEventListener('click', function () {
+    onayiKapat();
+    bildir('Yükleme iptal edildi.');
+  });
+
+  dosyaGirdisi.addEventListener('change', function () {
+    var dosya = dosyaGirdisi.files && dosyaGirdisi.files[0];
+    dosyaGirdisi.value = ''; // aynı dosya tekrar seçilebilsin
+    if (!dosya) return;
+    var okuyucu = new FileReader();
+    okuyucu.onerror = function () { bildir('Dosya okunamadı.'); };
+    okuyucu.onload = function () {
+      var veri = null;
+      try { veri = JSON.parse(String(okuyucu.result).replace(/^﻿/, '')); } catch (_) {}
+      if (!veri || veri.form !== 'deep-jam-basvuru' || !veri.alanlar || typeof veri.alanlar !== 'object') {
+        onayiKapat();
+        bildir('Bu dosya bir Deep Jam başvuru kaydı değil.');
+        return;
+      }
+      if (formDoluMu()) {
+        bekleyenVeri = { veri: veri, ad: dosya.name };
+        onayKutusu.hidden = false;
+        bildir('');
+        document.getElementById('yukle_evet').focus();
+      } else {
+        uygula(veri);
+        bildir('Yüklendi: ' + dosya.name);
+      }
+    };
+    okuyucu.readAsText(dosya, 'UTF-8');
+  });
+
+  // ---------- Otomatik taslak (bu tarayıcıda saklanır) ----------
+  var TASLAK = 'deep-jam-basvuru-taslak';
+  var zamanlayici = null;
+
+  function saat(d) { return iki(d.getHours()) + ':' + iki(d.getMinutes()); }
+
+  function taslakKaydet() {
+    zamanlayici = null;
+    try {
+      localStorage.setItem(TASLAK, JSON.stringify(cevaplariTopla()));
+      document.getElementById('taslak_durum').textContent = 'Taslak bu tarayıcıya otomatik kaydedildi · ' + saat(new Date());
+    } catch (_) { /* gizli sekme vb.: sessizce geç */ }
+  }
+  function kaydetPlanla() {
+    if (zamanlayici) clearTimeout(zamanlayici);
+    zamanlayici = setTimeout(taslakKaydet, 600);
+  }
+  function hemenKaydet() { if (zamanlayici) { clearTimeout(zamanlayici); taslakKaydet(); } }
+
+  // Açılışta önceki taslağı geri getir
+  try {
+    var kayitli = JSON.parse(localStorage.getItem(TASLAK) || 'null');
+    if (kayitli && kayitli.form === 'deep-jam-basvuru' && kayitli.alanlar) {
+      uygula(kayitli);
+      var t = new Date(kayitli.kayit_tarihi);
+      bildir('Önceki taslağınız geri yüklendi' + (isNaN(t) ? '' : ' · ' + t.toLocaleDateString('tr-TR') + ' ' + saat(t)));
+    }
+  } catch (_) {}
+
+  form.addEventListener('input', kaydetPlanla);
+  form.addEventListener('change', kaydetPlanla);
+  document.getElementById('yukle_evet').addEventListener('click', kaydetPlanla);
+  dosyaGirdisi.addEventListener('change', function () { setTimeout(kaydetPlanla, 300); });
+  window.addEventListener('pagehide', hemenKaydet);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) hemenKaydet(); });
+})();
+</script>
+
+</body>
+</html>
